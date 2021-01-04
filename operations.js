@@ -1,6 +1,8 @@
+const fs = require("fs");
+
 function calcMean(nums) {
     const res = nums.reduce(function(total,num){
-        return total+parseInt(num);
+        return parseInt(total)+parseInt(num);
     })
 
     return res/nums.length;
@@ -9,7 +11,6 @@ function calcMean(nums) {
 function calcMedian(nums) {
     const numsLen = nums.length;
     nums.sort((a,b) => a-b);
-    console.log((nums[numsLen/2-1]+nums[(numsLen+2)/2-1])/2);
     return numsLen%2 !== 0 ? nums[(numsLen+1)/2-1]:(parseInt(nums[numsLen/2-1])+parseInt(nums[(numsLen+2)/2-1]))/2;
 }
 
@@ -55,14 +56,42 @@ function isEmpty(nums) {
     return nums.length === 0;
 }
 
+function writeToFile(data) {
+    try {
+        fs.writeFileSync("results.json", JSON.stringify(data));
+        console.log('Successfully wrote to file!');
+        } catch (error) {
+        console.error(`File write failed: ${error}`)
+        process.exit(1);
+    }
+    // fs.writeFile("results.json",JSON.stringify(data),"utf8", function(err){
+    //     if (err) {
+    //         console.error(err);
+    //         process.exit(1);
+    //     }
+    //     console.log('Successfully wrote to file!');
+    // });
+}
+
+function getObjAndWrite(obj){
+    console.log(obj);
+    console.log(fs.readFileSync("results.json", "utf8"));
+    let file = fs.readFileSync("results.json", "utf8");
+    const data = file ? JSON.parse(file):[];
+    console.log(data);
+    data.push(obj);
+    writeToFile(data);
+}
+
 module.exports = {
 	operations: {
-		mean:calcMean,
-		median:calcMedian,
-        mode:calcMode,
-        all
-    },
-    isEmpty,
-    isAllNums
+		mean: calcMean,
+		median: calcMedian,
+		mode: calcMode,
+		all,
+	},
+	isEmpty,
+	isAllNums,
+	getObjAndWrite
 };
 
